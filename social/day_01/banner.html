@@ -4,207 +4,265 @@
 <meta charset="utf-8">
 <style>
   :root {
-    --paper: #faf7f1;
-    --ink: #1c1b18;
-    --graphite: #6b675e;
-    --hairline: #d8d2c4;
-    --chip-bg: #f0ece2;
-    --chip-ink: #57534a;
-    --accent: #a33327;          /* annotation crimson */
-    --accent-soft: #f3e2df;
+    --paper: #f5f2e8;
+    --ink: #22201b;
+    --faded: #55524a;
+    --hairline: #8c887c;
+    --grid: rgba(112, 134, 156, 0.14);
+    --stamp: #ab372b;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1600px; height: 900px; overflow: hidden; }
   body {
     background: var(--paper);
     color: var(--ink);
-    font-family: "Charter", "Iowan Old Style", Georgia, serif;
+    font-family: "American Typewriter", "Courier New", monospace;
     position: relative;
   }
-  /* faint paper grain via dotted lattice */
+  /* faint drafting grid */
   body::before {
-    content: "";
-    position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(28,27,24,0.045) 1px, transparent 1px);
-    background-size: 26px 26px;
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 20px 10px;
   }
 
-  .frame { position: absolute; inset: 0; padding: 56px 110px 48px; display: flex; flex-direction: column; }
+  /* double border frame */
+  .outer { position: absolute; inset: 22px; border: 2.5px solid var(--ink); }
+  .inner { position: absolute; inset: 34px; border: 1px solid var(--ink); }
 
-  /* journal masthead */
-  .masthead {
-    display: flex; justify-content: space-between; align-items: baseline;
-    font-size: 20px; letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--graphite);
-  }
-  .masthead .left b { color: var(--ink); font-weight: 600; }
-  .masthead .right { font-family: "SF Mono", Menlo, monospace; font-size: 17px; letter-spacing: 0.18em; }
-  .rule { border: none; border-top: 1px solid var(--ink); margin-top: 14px; position: relative; }
-  .rule.double::after {
-    content: ""; position: absolute; left: 0; right: 0; top: 3px;
-    border-top: 1px solid var(--ink);
+  /* zone ticks between borders */
+  .zone { position: absolute; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--ink); }
+  .zone.top { top: 22px; height: 12px; }
+  .zone.bot { bottom: 22px; height: 12px; }
+  .zone.left { left: 22px; width: 12px; }
+  .zone.right { right: 22px; width: 12px; }
+  .ztick-h { position: absolute; top: 0; height: 12px; border-left: 1px solid var(--ink); }
+  .zlabel-h { position: absolute; top: -1px; width: 40px; text-align: center; }
+  .ztick-v { position: absolute; left: 0; width: 12px; border-top: 1px solid var(--ink); }
+  .zlabel-v { position: absolute; left: 1px; height: 40px; line-height: 40px; }
+
+  .sheet {
+    position: absolute; inset: 35px; padding: 22px 30px 24px;
+    display: flex; flex-direction: column;
   }
 
-  .main { flex: 1; display: flex; gap: 90px; margin-top: 44px; align-items: stretch; }
+  /* header strip */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .series {
+    font-size: 34px; font-weight: 700; letter-spacing: 0.06em;
+  }
+  .series-sub {
+    margin-top: 6px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 13.5px; letter-spacing: 0.24em; color: var(--faded);
+  }
 
-  /* left: the title block */
-  .left-col { flex: 1.12; display: flex; flex-direction: column; }
-  .kicker {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 17px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase;
+  /* revision table (upper right) */
+  table { border-collapse: collapse; }
+  .revtable td, .revtable th, .parts td, .parts th, .tblock td {
+    border: 1px solid var(--ink);
   }
-  .dayline { display: flex; align-items: baseline; gap: 26px; margin-top: 10px; }
-  .daynum {
-    font-size: 250px; line-height: 0.9; font-weight: 400; letter-spacing: -0.03em;
-    font-variant-numeric: lining-nums;
+  .revtable th, .parts th {
+    font-family: Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 10.5px; letter-spacing: 0.14em; padding: 4px 10px; text-align: left;
   }
-  .dayof { font-size: 30px; color: var(--graphite); font-style: italic; }
-  .title {
-    margin-top: 34px;
-    font-size: 52px; line-height: 1.14; font-weight: 400; letter-spacing: -0.005em;
-    max-width: 660px;
-  }
-  .title em { font-style: italic; }
-  .abstract {
-    margin-top: 24px; padding-left: 22px; border-left: 2.5px solid var(--accent);
-    font-size: 22.5px; line-height: 1.5; color: var(--graphite); max-width: 600px;
-  }
-  .chips { margin-top: auto; padding-top: 26px; display: flex; gap: 12px; }
-  .chip {
-    font-family: -apple-system, "Helvetica Neue", sans-serif;
-    font-size: 17.5px; font-weight: 500; color: var(--chip-ink);
-    background: var(--chip-bg); border: 1px solid var(--hairline);
-    padding: 8px 16px; border-radius: 7px;
-  }
-  .chip.red { color: var(--accent); background: var(--accent-soft); border-color: #e3c4bf; }
+  .revtable td, .parts td { font-size: 14px; padding: 5px 12px; }
 
-  /* right: Figure 1 */
-  .fig {
-    flex: 1; display: flex; flex-direction: column; justify-content: center;
-  }
-  .figbox {
-    border: 1.25px solid var(--ink); background: rgba(255,255,255,0.55);
-    padding: 30px 26px 18px;
-  }
-  svg { display: block; margin: 0 auto; }
-  svg text { font-family: "SF Mono", Menlo, monospace; }
-  .caption {
-    margin-top: 16px; font-size: 19px; line-height: 1.45; color: var(--ink);
-  }
-  .caption b { font-weight: 600; }
-  .caption i { color: var(--graphite); }
+  .body { flex: 1; display: flex; margin-top: 20px; gap: 34px; min-height: 0; }
 
-  /* footer */
-  .foot { margin-top: 34px; }
-  .foot hr { border: none; border-top: 1px solid var(--ink); margin-bottom: 18px; }
-  .footrow {
-    display: flex; justify-content: space-between; align-items: center;
+  /* left column: notes */
+  .leftcol { width: 610px; display: flex; flex-direction: column; }
+  .daybig { font-size: 104px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; }
+  .daybig .of { font-size: 40px; font-weight: 400; color: var(--faded); }
+  .dwgtitle {
+    margin-top: 18px; font-size: 27px; font-weight: 700; line-height: 1.35;
+    letter-spacing: 0.03em; text-transform: uppercase;
   }
-  .compass {
-    font-size: 19px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite);
+  .notes { margin-top: 26px; }
+  .notes-head {
+    font-family: Helvetica, Arial, sans-serif; font-size: 12px; letter-spacing: 0.22em;
+    border-bottom: 1px solid var(--ink); display: inline-block; padding-bottom: 3px;
   }
-  .compass .sep { color: var(--hairline); margin: 0 6px; }
-  .compass .today {
-    color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 2px; font-weight: 600;
+  .notes ol { margin: 12px 0 0 26px; font-size: 15.5px; line-height: 1.58; }
+  .notes li { padding-left: 6px; margin-bottom: 5px; }
+  .notes .u { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* parts list pinned at bottom of left col */
+  .parts { margin-top: auto; width: 100%; }
+  .parts td.qty, .parts th.qty { text-align: center; }
+
+  /* right column: figure + title block */
+  .rightcol { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .figarea { flex: 1; position: relative; min-height: 0; }
+  .figarea > svg { width: 100%; height: 100%; }
+  svg { display: block; }
+  svg text { font-family: "American Typewriter", "Courier New", monospace; }
+  .figlabel {
+    text-align: center; font-size: 17px; font-style: italic; margin-top: 2px;
   }
-  .gh { font-family: "SF Mono", Menlo, monospace; font-size: 17.5px; color: var(--ink); }
-  .ticksrow { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
-  .ticks { display: flex; gap: 4.5px; }
-  .tick { width: 22px; height: 10px; border: 1px solid #c9c2b2; border-radius: 2px; background: transparent; }
-  .tick.done { background: var(--accent); border-color: var(--accent); }
-  .tlabel { font-family: "SF Mono", Menlo, monospace; font-size: 15px; color: var(--graphite); letter-spacing: 0.08em; }
+
+  /* stamp */
+  .stamp {
+    position: absolute; top: 8px; right: 12px;
+    transform: rotate(-6deg);
+    border: 3.5px solid var(--stamp); color: var(--stamp);
+    padding: 8px 22px 6px; text-align: center;
+    opacity: 0.85;
+  }
+  .stamp .s1 { font-size: 15px; letter-spacing: 0.3em; font-family: Helvetica, Arial, sans-serif; }
+  .stamp .s2 { font-size: 30px; font-weight: 700; letter-spacing: 0.12em; margin-top: 2px; }
+
+  /* title block */
+  .tblock { width: 100%; margin-top: 12px; }
+  .tblock td { padding: 5px 12px; vertical-align: top; }
+  .tblock .lab {
+    display: block;
+    font-family: Helvetica, Arial, sans-serif; font-size: 9.5px; letter-spacing: 0.16em;
+    color: var(--faded); margin-bottom: 3px;
+  }
+  .tblock .val { font-size: 16px; font-weight: 700; }
+  .tblock .val.small { font-size: 14px; font-weight: 400; }
 </style>
 </head>
 <body>
-  <div class="frame">
+  <div class="outer"></div>
+  <div class="inner"></div>
 
-    <div class="masthead">
-      <div class="left"><b>Robotics</b>&nbsp;from&nbsp;Scratch</div>
-      <div class="right">A 45-DAY FIELD LOG · BUILT IN PUBLIC</div>
+  <!-- zone ticks: top/bottom numbers, side letters -->
+  <div class="zone top" style="left:22px; right:22px;">
+    <div class="ztick-h" style="left:389px"></div><div class="ztick-h" style="left:778px"></div><div class="ztick-h" style="left:1167px"></div>
+    <div class="zlabel-h" style="left:175px">4</div><div class="zlabel-h" style="left:564px">3</div>
+    <div class="zlabel-h" style="left:953px">2</div><div class="zlabel-h" style="left:1342px">1</div>
+  </div>
+  <div class="zone bot" style="left:22px; right:22px;">
+    <div class="ztick-h" style="left:389px"></div><div class="ztick-h" style="left:778px"></div><div class="ztick-h" style="left:1167px"></div>
+    <div class="zlabel-h" style="left:175px">4</div><div class="zlabel-h" style="left:564px">3</div>
+    <div class="zlabel-h" style="left:953px">2</div><div class="zlabel-h" style="left:1342px">1</div>
+  </div>
+  <div class="zone left" style="top:22px; bottom:22px;">
+    <div class="ztick-v" style="top:285px"></div><div class="ztick-v" style="top:570px"></div>
+    <div class="zlabel-v" style="top:120px">C</div><div class="zlabel-v" style="top:405px">B</div><div class="zlabel-v" style="top:690px">A</div>
+  </div>
+  <div class="zone right" style="top:22px; bottom:22px;">
+    <div class="ztick-v" style="top:285px"></div><div class="ztick-v" style="top:570px"></div>
+    <div class="zlabel-v" style="top:120px">C</div><div class="zlabel-v" style="top:405px">B</div><div class="zlabel-v" style="top:690px">A</div>
+  </div>
+
+  <div class="sheet">
+
+    <div class="header">
+      <div>
+        <div class="series">ROBOTICS FROM SCRATCH</div>
+        <div class="series-sub">A 45-DAY BUILD LOG &nbsp;·&nbsp; SIMULATION ONLY &nbsp;·&nbsp; ALL WORK PUBLIC</div>
+      </div>
+      <table class="revtable">
+        <tr><th>REV</th><th>DESCRIPTION</th><th>DATE</th></tr>
+        <tr><td>A</td><td>FIRST ISSUE · THE ROS 2 GRAPH</td><td>2026-07-17</td></tr>
+      </table>
     </div>
-    <hr class="rule double">
 
-    <div class="main">
-      <div class="left-col">
-        <div class="kicker">Day</div>
-        <div class="dayline">
-          <div class="daynum">01</div>
-          <div class="dayof">of 45</div>
+    <div class="body">
+      <div class="leftcol">
+        <div class="daybig">DAY 01<span class="of">/45</span></div>
+        <div class="dwgtitle">The robotics stack &amp;<br>a first ROS 2 graph</div>
+
+        <div class="notes">
+          <div class="notes-head">GENERAL NOTES</div>
+          <ol>
+            <li>EVERY ROBOT IS ONE LOOP: <span class="u">SENSE, ESTIMATE, PLAN, ACT</span>, HELD TOGETHER BY TRANSFORMS.</li>
+            <li>TODAY THE LOOP IS INSTALLED AND TWO PROGRAMS START TALKING.</li>
+            <li>SERIES ENDS DAY 45 AT AN AUTONOMOUS FETCH-AND-DELIVER ROBOT.</li>
+            <li>ALL NOTEBOOKS AND MISTAKES AT:<br>GITHUB.COM/FILIPPO-FONSECA/ROBOTICS-FROM-SCRATCH</li>
+          </ol>
         </div>
-        <div class="title">What a robot <em>actually</em> is, and a first ROS 2 graph.</div>
-        <div class="abstract">
-          Every robot is one loop: sense, estimate, plan, act, held together by
-          transforms. Today the loop gets installed, and two programs start talking.
-        </div>
-        <div class="chips">
-          <div class="chip red">Phase A · Foundations</div>
-          <div class="chip">ROS 2 Jazzy</div>
-          <div class="chip">sim only</div>
-        </div>
+
+        <table class="parts">
+          <tr><th style="width:70px">ITEM</th><th>DESCRIPTION</th><th class="qty" style="width:70px">QTY</th></tr>
+          <tr><td class="qty">1</td><td>/talker · PUBLISHER NODE (C++)</td><td class="qty">1</td></tr>
+          <tr><td class="qty">2</td><td>/chatter · TOPIC, std_msgs/String</td><td class="qty">1</td></tr>
+          <tr><td class="qty">3</td><td>/listener · SUBSCRIBER NODE (PY)</td><td class="qty">1</td></tr>
+        </table>
       </div>
 
-      <div class="fig">
-        <div class="figbox">
-          <svg width="470" height="330" viewBox="0 0 470 330">
+      <div class="rightcol">
+        <div class="figarea">
+          <div class="stamp">
+            <div class="s1">BUILT IN PUBLIC</div>
+            <div class="s2">DAY 01</div>
+          </div>
+
+          <svg width="100%" height="100%" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet">
             <defs>
-              <marker id="ah" markerWidth="9" markerHeight="8" refX="7" refY="4" orient="auto">
-                <path d="M0,0 L8,4 L0,8 z" fill="#a33327"/>
+              <marker id="arr" markerWidth="9" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#22201b"/>
               </marker>
             </defs>
 
-            <!-- talker node -->
-            <ellipse cx="110" cy="70" rx="88" ry="40" fill="none" stroke="#1c1b18" stroke-width="1.75"/>
-            <text x="110" y="77" fill="#1c1b18" font-size="22" text-anchor="middle">/talker</text>
+            <!-- centerline (dash-dot drafting convention) -->
+            <line x1="120" y1="470" x2="700" y2="90" stroke="#8c887c" stroke-width="1"
+                  stroke-dasharray="18 6 3 6"/>
 
-            <!-- listener node -->
-            <ellipse cx="352" cy="258" rx="96" ry="40" fill="none" stroke="#1c1b18" stroke-width="1.75"/>
-            <text x="352" y="265" fill="#1c1b18" font-size="22" text-anchor="middle">/listener</text>
+            <!-- item 1: talker -->
+            <ellipse cx="215" cy="410" rx="105" ry="48" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="215" y="418" font-size="24" text-anchor="middle">/talker</text>
 
-            <!-- topic box -->
-            <rect x="168" y="136" width="140" height="48" fill="none" stroke="#1c1b18" stroke-width="1.5"/>
-            <text x="238" y="166" fill="#1c1b18" font-size="20" text-anchor="middle">/chatter</text>
+            <!-- item 2: chatter -->
+            <rect x="330" y="245" width="160" height="56" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="410" y="281" font-size="22" text-anchor="middle">/chatter</text>
 
-            <!-- edges in annotation red -->
-            <path d="M 152 104 C 168 118, 176 126, 188 136" fill="none" stroke="#a33327" stroke-width="2" marker-end="url(#ah)"/>
-            <path d="M 286 184 C 300 196, 308 204, 320 219" fill="none" stroke="#a33327" stroke-width="2" marker-end="url(#ah)"/>
+            <!-- item 3: listener -->
+            <ellipse cx="600" cy="145" rx="112" ry="48" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="600" y="153" font-size="24" text-anchor="middle">/listener</text>
 
-            <!-- labels -->
-            <text x="90" y="130" fill="#6b675e" font-size="16" font-style="italic">publish</text>
-            <text x="316" y="204" fill="#6b675e" font-size="16" font-style="italic">subscribe</text>
+            <!-- flow arrows -->
+            <path d="M 290 372 C 315 350, 330 330, 355 303" fill="none" stroke="#22201b" stroke-width="2" marker-end="url(#arr)"/>
+            <path d="M 466 243 C 495 220, 515 205, 540 185" fill="none" stroke="#22201b" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="266" y="330" font-size="16" font-style="italic" transform="rotate(-38 286 335)">publishes</text>
+            <text x="463" y="200" font-size="16" font-style="italic" transform="rotate(-33 483 205)">subscribes</text>
 
-            <!-- margin note -->
-            <text x="24" y="316" fill="#6b675e" font-size="15" font-style="italic">neither node knows the other exists.</text>
+            <!-- leader lines with item bubbles -->
+            <line x1="150" y1="452" x2="92" y2="505" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="80" cy="516" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="80" y="522" font-size="17" text-anchor="middle">1</text>
+
+            <line x1="352" y1="247" x2="318" y2="207" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="307" cy="194" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="307" y="200" font-size="17" text-anchor="middle">2</text>
+
+            <line x1="672" y1="180" x2="722" y2="232" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="733" cy="243" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="733" y="249" font-size="17" text-anchor="middle">3</text>
+
+            <!-- margin annotation -->
+            <text x="430" y="470" font-size="16" font-style="italic" fill="#55524a">note: neither node knows</text>
+            <text x="430" y="494" font-size="16" font-style="italic" fill="#55524a">the other exists. that is the point.</text>
           </svg>
         </div>
-        <div class="caption">
-          <b>Fig. 1.</b> Two independent programs, one channel. The pub/sub graph
-          is the connective tissue of every robot that follows. <i>Rendered live with rqt_graph.</i>
-        </div>
-      </div>
-    </div>
+        <div class="figlabel">Fig. 1. The conversation, as inspected live with rqt_graph.</div>
 
-    <div class="foot">
-      <hr>
-      <div class="footrow">
-        <div class="compass">
-          Sense <span class="sep">→</span> Estimate <span class="sep">→</span> Plan <span class="sep">→</span> Act
-          <span class="sep">·</span> <span class="today">today: the glue</span>
-        </div>
-        <div class="gh">github.com/filippo-fonseca/robotics-from-scratch</div>
-      </div>
-      <div class="ticksrow">
-        <div class="ticks">
-          <div class="tick done"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
-        </div>
-        <div class="tlabel">1 / 45</div>
+        <table class="tblock">
+          <tr>
+            <td style="width:44%" rowspan="2">
+              <span class="lab">TITLE</span>
+              <span class="val">THE ROBOTICS STACK &amp;<br>A FIRST ROS 2 GRAPH</span>
+            </td>
+            <td style="width:19%"><span class="lab">DWG NO.</span><span class="val">RFS-001</span></td>
+            <td style="width:19%"><span class="lab">SHEET</span><span class="val">01 OF 45</span></td>
+            <td style="width:18%"><span class="lab">REV</span><span class="val">A</span></td>
+          </tr>
+          <tr>
+            <td><span class="lab">DATE</span><span class="val small">2026-07-17</span></td>
+            <td><span class="lab">SCALE</span><span class="val small">NTS</span></td>
+            <td><span class="lab">PHASE</span><span class="val small">A, FDNS.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lab">DRAWN BY</span><span class="val small">F. FONSECA, YALE '28</span></td>
+            <td colspan="3"><span class="lab">SOURCE</span><span class="val small">GITHUB.COM/FILIPPO-FONSECA/ROBOTICS-FROM-SCRATCH</span></td>
+          </tr>
+        </table>
       </div>
     </div>
 
