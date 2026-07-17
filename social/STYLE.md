@@ -15,17 +15,19 @@ One post per day on LinkedIn and X, plus one banner image. Same skeleton every d
 9. Length: LinkedIn 6-10 short paragraphs max, X under ~600 characters. Milestone days (25, 36, 42) can run longer and lead with the demo video.
 10. LinkedIn is sentence case and full sentences; X is lowercase and looser. Same substance, different register.
 
-## Banner system ("academic paper x Notion")
+## Banner system (vintage engineering drawing sheet)
 
-One 1600x900 image per day, generated from `banner.html` (copy the previous day's file, edit the fields), screenshotted headlessly. The identity:
+One 1600x900 image per day, generated from `banner.html` (copy the previous day's file, edit the fields), screenshotted headlessly. The identity is an ASME-style engineering drawing sheet; it was chosen after researching AI-design tells (no gradients, no pills/chips, no cards, no centered-symmetric layout, no decorative emoji; asymmetry, print conventions, and content specificity are what read as human).
 
-- Warm paper background `#faf7f1`, faint dot lattice, ink `#1c1b18`, graphite `#6b675e`, ONE accent: annotation crimson `#a33327`. Never add colors.
-- Serif everything (Charter/Georgia), like a journal cover. Mono (SF Mono/Menlo) only for code-ish strings: topic names, the GitHub URL, counters.
-- Masthead: "Robotics from Scratch" left, "A 45-DAY FIELD LOG · BUILT IN PUBLIC" right, double rule under it.
-- Giant serif day number ("01") with italic "of 45", then the day title (one italic word for emphasis), then a 2-line abstract with a crimson left border.
-- Notion-style tag chips: crimson chip = phase ("Phase A · Foundations"), gray chips = topic tags.
-- Right side: "Fig. 1", the day's concept as an ink diagram in a thin-bordered box, with a real academic caption ("Fig. 1. ...") and an italic margin note inside the figure. This diagram changes daily and is the creative slot.
-- Footer: compass line "Sense → Estimate → Plan → Act" with "today: <box>" underlined in crimson (which of the five boxes today's topic belongs to), GitHub URL, and the 45-tick progress row with completed days filled crimson.
+- Paper `#f5f2e8`, ink `#22201b`, faded ink `#55524a`, faint drafting grid, ONE accent: stamp red `#ab372b`. Never add colors.
+- Type: American Typewriter (fallback Courier New) for everything except tiny letterspaced Helvetica caps for cell labels (TITLE, DWG NO., REV...).
+- Double border frame (2.5px outer, 1px inner) with zone ticks and letters/numbers along all four edges (4-3-2-1 top/bottom, C-B-A sides).
+- Header: series name big slab caps + one-line sub ("A 45-DAY BUILD LOG · SIMULATION ONLY · ALL WORK PUBLIC"). Revision table upper-right (REV / DESCRIPTION / DATE), one row per notable series event.
+- Left column: huge "DAY NN/45", the day title in caps, a GENERAL NOTES numbered list (the concept in 3-4 lines, always ending with the GitHub URL as a note), and a parts list table (ITEM / DESCRIPTION / QTY) whose rows are the day's actual components.
+- Right column: the day's concept as ink line-art with drafting conventions: dash-dot centerline, numbered leader-line bubbles matching the parts list, italic annotations, an italic "Fig. 1." caption line. This drawing changes daily and is the creative slot.
+- Title block bottom-right (the signature element): TITLE, DWG NO. RFS-0NN, SHEET NN OF 45, REV, DATE, SCALE NTS, PHASE, DRAWN BY F. FONSECA YALE '28, SOURCE = repo URL.
+- Rotated red boxed stamp upper-right: "BUILT IN PUBLIC / DAY NN".
+- No em dashes anywhere on the sheet; separators are "·", commas, or slashes.
 
 ### Regenerating
 
