@@ -1,0 +1,14 @@
+{
+  "name": "robotics-from-scratch",
+  "description": "Plugins from the Robotics From Scratch build-in-public series",
+  "owner": {
+    "name": "Filippo Fonseca"
+  },
+  "plugins": [
+    {
+      "name": "robotics-day",
+      "source": "./robotics-day-plugin",
+      "description": "Generate the next day's lesson notebook of the Robotics From Scratch 45-day curriculum, folding in your recap of the previous day"
+    }
+  ]
+}

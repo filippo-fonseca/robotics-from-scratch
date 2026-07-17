@@ -1,0 +1,12 @@
+{
+  "name": "robotics-day",
+  "displayName": "Robotics Day Generator",
+  "description": "One command, /new-robotics-day, that authors the next daily lesson notebook of a day-by-day robotics curriculum: intuition-first, runnable cells, deliberate-practice stretch, and a build-in-public blurb.",
+  "author": {
+    "name": "Filippo Fonseca"
+  },
+  "homepage": "https://github.com/filippo-fonseca/robotics-from-scratch",
+  "repository": "https://github.com/filippo-fonseca/robotics-from-scratch",
+  "license": "MIT",
+  "keywords": ["robotics", "ros2", "learning", "notebooks", "build-in-public"]
+}
