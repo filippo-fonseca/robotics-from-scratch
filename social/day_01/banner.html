@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --paper: #faf7f1;
+    --ink: #1c1b18;
+    --graphite: #6b675e;
+    --hairline: #d8d2c4;
+    --chip-bg: #f0ece2;
+    --chip-ink: #57534a;
+    --accent: #a33327;          /* annotation crimson */
+    --accent-soft: #f3e2df;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Charter", "Iowan Old Style", Georgia, serif;
+    position: relative;
+  }
+  /* faint paper grain via dotted lattice */
+  body::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(28,27,24,0.045) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+
+  .frame { position: absolute; inset: 0; padding: 56px 110px 48px; display: flex; flex-direction: column; }
+
+  /* journal masthead */
+  .masthead {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 20px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--graphite);
+  }
+  .masthead .left b { color: var(--ink); font-weight: 600; }
+  .masthead .right { font-family: "SF Mono", Menlo, monospace; font-size: 17px; letter-spacing: 0.18em; }
+  .rule { border: none; border-top: 1px solid var(--ink); margin-top: 14px; position: relative; }
+  .rule.double::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 3px;
+    border-top: 1px solid var(--ink);
+  }
+
+  .main { flex: 1; display: flex; gap: 90px; margin-top: 44px; align-items: stretch; }
+
+  /* left: the title block */
+  .left-col { flex: 1.12; display: flex; flex-direction: column; }
+  .kicker {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 17px; letter-spacing: 0.3em; color: var(--accent); text-transform: uppercase;
+  }
+  .dayline { display: flex; align-items: baseline; gap: 26px; margin-top: 10px; }
+  .daynum {
+    font-size: 250px; line-height: 0.9; font-weight: 400; letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums;
+  }
+  .dayof { font-size: 30px; color: var(--graphite); font-style: italic; }
+  .title {
+    margin-top: 34px;
+    font-size: 52px; line-height: 1.14; font-weight: 400; letter-spacing: -0.005em;
+    max-width: 660px;
+  }
+  .title em { font-style: italic; }
+  .abstract {
+    margin-top: 24px; padding-left: 22px; border-left: 2.5px solid var(--accent);
+    font-size: 22.5px; line-height: 1.5; color: var(--graphite); max-width: 600px;
+  }
+  .chips { margin-top: auto; padding-top: 26px; display: flex; gap: 12px; }
+  .chip {
+    font-family: -apple-system, "Helvetica Neue", sans-serif;
+    font-size: 17.5px; font-weight: 500; color: var(--chip-ink);
+    background: var(--chip-bg); border: 1px solid var(--hairline);
+    padding: 8px 16px; border-radius: 7px;
+  }
+  .chip.red { color: var(--accent); background: var(--accent-soft); border-color: #e3c4bf; }
+
+  /* right: Figure 1 */
+  .fig {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+  }
+  .figbox {
+    border: 1.25px solid var(--ink); background: rgba(255,255,255,0.55);
+    padding: 30px 26px 18px;
+  }
+  svg { display: block; margin: 0 auto; }
+  svg text { font-family: "SF Mono", Menlo, monospace; }
+  .caption {
+    margin-top: 16px; font-size: 19px; line-height: 1.45; color: var(--ink);
+  }
+  .caption b { font-weight: 600; }
+  .caption i { color: var(--graphite); }
+
+  /* footer */
+  .foot { margin-top: 34px; }
+  .foot hr { border: none; border-top: 1px solid var(--ink); margin-bottom: 18px; }
+  .footrow {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .compass {
+    font-size: 19px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--graphite);
+  }
+  .compass .sep { color: var(--hairline); margin: 0 6px; }
+  .compass .today {
+    color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 2px; font-weight: 600;
+  }
+  .gh { font-family: "SF Mono", Menlo, monospace; font-size: 17.5px; color: var(--ink); }
+  .ticksrow { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+  .ticks { display: flex; gap: 4.5px; }
+  .tick { width: 22px; height: 10px; border: 1px solid #c9c2b2; border-radius: 2px; background: transparent; }
+  .tick.done { background: var(--accent); border-color: var(--accent); }
+  .tlabel { font-family: "SF Mono", Menlo, monospace; font-size: 15px; color: var(--graphite); letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+  <div class="frame">
+
+    <div class="masthead">
+      <div class="left"><b>Robotics</b>&nbsp;from&nbsp;Scratch</div>
+      <div class="right">A 45-DAY FIELD LOG · BUILT IN PUBLIC</div>
+    </div>
+    <hr class="rule double">
+
+    <div class="main">
+      <div class="left-col">
+        <div class="kicker">Day</div>
+        <div class="dayline">
+          <div class="daynum">01</div>
+          <div class="dayof">of 45</div>
+        </div>
+        <div class="title">What a robot <em>actually</em> is, and a first ROS 2 graph.</div>
+        <div class="abstract">
+          Every robot is one loop: sense, estimate, plan, act, held together by
+          transforms. Today the loop gets installed, and two programs start talking.
+        </div>
+        <div class="chips">
+          <div class="chip red">Phase A · Foundations</div>
+          <div class="chip">ROS 2 Jazzy</div>
+          <div class="chip">sim only</div>
+        </div>
+      </div>
+
+      <div class="fig">
+        <div class="figbox">
+          <svg width="470" height="330" viewBox="0 0 470 330">
+            <defs>
+              <marker id="ah" markerWidth="9" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#a33327"/>
+              </marker>
+            </defs>
+
+            <!-- talker node -->
+            <ellipse cx="110" cy="70" rx="88" ry="40" fill="none" stroke="#1c1b18" stroke-width="1.75"/>
+            <text x="110" y="77" fill="#1c1b18" font-size="22" text-anchor="middle">/talker</text>
+
+            <!-- listener node -->
+            <ellipse cx="352" cy="258" rx="96" ry="40" fill="none" stroke="#1c1b18" stroke-width="1.75"/>
+            <text x="352" y="265" fill="#1c1b18" font-size="22" text-anchor="middle">/listener</text>
+
+            <!-- topic box -->
+            <rect x="168" y="136" width="140" height="48" fill="none" stroke="#1c1b18" stroke-width="1.5"/>
+            <text x="238" y="166" fill="#1c1b18" font-size="20" text-anchor="middle">/chatter</text>
+
+            <!-- edges in annotation red -->
+            <path d="M 152 104 C 168 118, 176 126, 188 136" fill="none" stroke="#a33327" stroke-width="2" marker-end="url(#ah)"/>
+            <path d="M 286 184 C 300 196, 308 204, 320 219" fill="none" stroke="#a33327" stroke-width="2" marker-end="url(#ah)"/>
+
+            <!-- labels -->
+            <text x="90" y="130" fill="#6b675e" font-size="16" font-style="italic">publish</text>
+            <text x="316" y="204" fill="#6b675e" font-size="16" font-style="italic">subscribe</text>
+
+            <!-- margin note -->
+            <text x="24" y="316" fill="#6b675e" font-size="15" font-style="italic">neither node knows the other exists.</text>
+          </svg>
+        </div>
+        <div class="caption">
+          <b>Fig. 1.</b> Two independent programs, one channel. The pub/sub graph
+          is the connective tissue of every robot that follows. <i>Rendered live with rqt_graph.</i>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <hr>
+      <div class="footrow">
+        <div class="compass">
+          Sense <span class="sep">→</span> Estimate <span class="sep">→</span> Plan <span class="sep">→</span> Act
+          <span class="sep">·</span> <span class="today">today: the glue</span>
+        </div>
+        <div class="gh">github.com/filippo-fonseca/robotics-from-scratch</div>
+      </div>
+      <div class="ticksrow">
+        <div class="ticks">
+          <div class="tick done"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+          <div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+        </div>
+        <div class="tlabel">1 / 45</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
