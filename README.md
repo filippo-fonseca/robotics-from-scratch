@@ -132,7 +132,7 @@ Anything you pass in gets folded into the lesson: struggles become spaced-retrie
 **Install it** (this repo doubles as a Claude Code plugin marketplace):
 
 ```bash
-/plugin marketplace add filippo-fonseca/robotics-from-scratch
+/plugin marketplace add https://github.com/filippo-fonseca/robotics-from-scratch.git
 /plugin install robotics-day@robotics-from-scratch
 ```
 

@@ -28,7 +28,7 @@ Depending on your Claude Code setup the command may be namespaced: `/robotics-da
 From the marketplace bundled in the parent repo:
 
 ```text
-/plugin marketplace add filippo-fonseca/robotics-from-scratch
+/plugin marketplace add https://github.com/filippo-fonseca/robotics-from-scratch.git
 /plugin install robotics-day@robotics-from-scratch
 ```
 
