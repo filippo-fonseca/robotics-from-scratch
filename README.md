@@ -41,6 +41,12 @@ The whole plan converges on one flagship demo built entirely in simulation: an *
 
 Notebooks get linked here as they ship. Unlinked days are still ahead of me.
 
+### Phase 0 — Environment setup (the evening before, not a whole day)
+
+| Day | Topic | Notebook |
+|----:|-------|----------|
+| 0 | ✅ Ubuntu 24.04 + ROS 2 Jazzy installed, verified with the talker/listener demo, `gh` set up, repo live | — (no notebook, per the plan) |
+
 ### Phase A — Foundations: math intuition, ROS 2 core, transforms (Days 1-8)
 
 | Day | Topic | Notebook |
