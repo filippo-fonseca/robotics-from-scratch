@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --paper: #f5f2e8;
+    --ink: #22201b;
+    --faded: #55524a;
+    --hairline: #8c887c;
+    --grid: rgba(112, 134, 156, 0.14);
+    --stamp: #ab372b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "American Typewriter", "Courier New", monospace;
+    position: relative;
+  }
+  /* faint drafting grid */
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 20px 10px;
+  }
+
+  /* double border frame */
+  .outer { position: absolute; inset: 22px; border: 2.5px solid var(--ink); }
+  .inner { position: absolute; inset: 34px; border: 1px solid var(--ink); }
+
+  /* zone ticks between borders */
+  .zone { position: absolute; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: var(--ink); }
+  .zone.top { top: 22px; height: 12px; }
+  .zone.bot { bottom: 22px; height: 12px; }
+  .zone.left { left: 22px; width: 12px; }
+  .zone.right { right: 22px; width: 12px; }
+  .ztick-h { position: absolute; top: 0; height: 12px; border-left: 1px solid var(--ink); }
+  .zlabel-h { position: absolute; top: -1px; width: 40px; text-align: center; }
+  .ztick-v { position: absolute; left: 0; width: 12px; border-top: 1px solid var(--ink); }
+  .zlabel-v { position: absolute; left: 1px; height: 40px; line-height: 40px; }
+
+  .sheet {
+    position: absolute; inset: 35px; padding: 22px 30px 24px;
+    display: flex; flex-direction: column;
+  }
+
+  /* header strip */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .series {
+    font-size: 34px; font-weight: 700; letter-spacing: 0.06em;
+  }
+  .series-sub {
+    margin-top: 6px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 13.5px; letter-spacing: 0.24em; color: var(--faded);
+  }
+
+  /* revision table (upper right) */
+  table { border-collapse: collapse; }
+  .revtable td, .revtable th, .parts td, .parts th, .tblock td {
+    border: 1px solid var(--ink);
+  }
+  .revtable th, .parts th {
+    font-family: Helvetica, Arial, sans-serif; font-weight: 400;
+    font-size: 10.5px; letter-spacing: 0.14em; padding: 4px 10px; text-align: left;
+  }
+  .revtable td, .parts td { font-size: 14px; padding: 5px 12px; }
+
+  .body { flex: 1; display: flex; margin-top: 20px; gap: 34px; min-height: 0; }
+
+  /* left column: notes */
+  .leftcol { width: 610px; display: flex; flex-direction: column; }
+  .daybig { font-size: 104px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; }
+  .daybig .of { font-size: 40px; font-weight: 400; color: var(--faded); }
+  .dwgtitle {
+    margin-top: 18px; font-size: 27px; font-weight: 700; line-height: 1.35;
+    letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  .notes { margin-top: 26px; }
+  .notes-head {
+    font-family: Helvetica, Arial, sans-serif; font-size: 12px; letter-spacing: 0.22em;
+    border-bottom: 1px solid var(--ink); display: inline-block; padding-bottom: 3px;
+  }
+  .notes ol { margin: 12px 0 0 26px; font-size: 15.5px; line-height: 1.58; }
+  .notes li { padding-left: 6px; margin-bottom: 5px; }
+  .notes .u { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* parts list pinned at bottom of left col */
+  .parts { margin-top: auto; width: 100%; }
+  .parts td.qty, .parts th.qty { text-align: center; }
+
+  /* right column: figure + title block */
+  .rightcol { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .figarea { flex: 1; position: relative; min-height: 0; }
+  .figarea > svg { width: 100%; height: 100%; }
+  svg { display: block; }
+  svg text { font-family: "American Typewriter", "Courier New", monospace; }
+  .figlabel {
+    text-align: center; font-size: 17px; font-style: italic; margin-top: 2px;
+  }
+
+  /* stamp */
+  .stamp {
+    position: absolute; top: 8px; right: 12px;
+    transform: rotate(-6deg);
+    border: 3.5px solid var(--stamp); color: var(--stamp);
+    padding: 8px 22px 6px; text-align: center;
+    opacity: 0.85;
+  }
+  .stamp .s1 { font-size: 15px; letter-spacing: 0.3em; font-family: Helvetica, Arial, sans-serif; }
+  .stamp .s2 { font-size: 30px; font-weight: 700; letter-spacing: 0.12em; margin-top: 2px; }
+
+  /* title block */
+  .tblock { width: 100%; margin-top: 12px; }
+  .tblock td { padding: 5px 12px; vertical-align: top; }
+  .tblock .lab {
+    display: block;
+    font-family: Helvetica, Arial, sans-serif; font-size: 9.5px; letter-spacing: 0.16em;
+    color: var(--faded); margin-bottom: 3px;
+  }
+  .tblock .val { font-size: 16px; font-weight: 700; }
+  .tblock .val.small { font-size: 14px; font-weight: 400; }
+</style>
+</head>
+<body>
+  <div class="outer"></div>
+  <div class="inner"></div>
+
+  <!-- zone ticks: top/bottom numbers, side letters -->
+  <div class="zone top" style="left:22px; right:22px;">
+    <div class="ztick-h" style="left:389px"></div><div class="ztick-h" style="left:778px"></div><div class="ztick-h" style="left:1167px"></div>
+    <div class="zlabel-h" style="left:175px">4</div><div class="zlabel-h" style="left:564px">3</div>
+    <div class="zlabel-h" style="left:953px">2</div><div class="zlabel-h" style="left:1342px">1</div>
+  </div>
+  <div class="zone bot" style="left:22px; right:22px;">
+    <div class="ztick-h" style="left:389px"></div><div class="ztick-h" style="left:778px"></div><div class="ztick-h" style="left:1167px"></div>
+    <div class="zlabel-h" style="left:175px">4</div><div class="zlabel-h" style="left:564px">3</div>
+    <div class="zlabel-h" style="left:953px">2</div><div class="zlabel-h" style="left:1342px">1</div>
+  </div>
+  <div class="zone left" style="top:22px; bottom:22px;">
+    <div class="ztick-v" style="top:285px"></div><div class="ztick-v" style="top:570px"></div>
+    <div class="zlabel-v" style="top:120px">C</div><div class="zlabel-v" style="top:405px">B</div><div class="zlabel-v" style="top:690px">A</div>
+  </div>
+  <div class="zone right" style="top:22px; bottom:22px;">
+    <div class="ztick-v" style="top:285px"></div><div class="ztick-v" style="top:570px"></div>
+    <div class="zlabel-v" style="top:120px">C</div><div class="zlabel-v" style="top:405px">B</div><div class="zlabel-v" style="top:690px">A</div>
+  </div>
+
+  <div class="sheet">
+
+    <div class="header">
+      <div>
+        <div class="series">ROBOTICS FROM SCRATCH</div>
+        <div class="series-sub">A 45-DAY BUILD LOG &nbsp;·&nbsp; SIMULATION ONLY &nbsp;·&nbsp; ALL WORK PUBLIC</div>
+      </div>
+      <table class="revtable">
+        <tr><th>REV</th><th>DESCRIPTION</th><th>DATE</th></tr>
+        <tr><td>A</td><td>FIRST ISSUE · THE ROS 2 GRAPH</td><td>2026-07-17</td></tr>
+      </table>
+    </div>
+
+    <div class="body">
+      <div class="leftcol">
+        <div class="daybig">DAY 01<span class="of">/45</span></div>
+        <div class="dwgtitle">The robotics stack &amp;<br>a first ROS 2 graph</div>
+
+        <div class="notes">
+          <div class="notes-head">GENERAL NOTES</div>
+          <ol>
+            <li>EVERY ROBOT IS ONE LOOP: <span class="u">SENSE, ESTIMATE, PLAN, ACT</span>, HELD TOGETHER BY TRANSFORMS.</li>
+            <li>TODAY THE LOOP IS INSTALLED AND TWO PROGRAMS START TALKING.</li>
+            <li>SERIES ENDS DAY 45 AT AN AUTONOMOUS FETCH-AND-DELIVER ROBOT.</li>
+            <li>ALL NOTEBOOKS AND MISTAKES AT:<br>GITHUB.COM/FILIPPO-FONSECA/ROBOTICS-FROM-SCRATCH</li>
+          </ol>
+        </div>
+
+        <table class="parts">
+          <tr><th style="width:70px">ITEM</th><th>DESCRIPTION</th><th class="qty" style="width:70px">QTY</th></tr>
+          <tr><td class="qty">1</td><td>/talker · PUBLISHER NODE (C++)</td><td class="qty">1</td></tr>
+          <tr><td class="qty">2</td><td>/chatter · TOPIC, std_msgs/String</td><td class="qty">1</td></tr>
+          <tr><td class="qty">3</td><td>/listener · SUBSCRIBER NODE (PY)</td><td class="qty">1</td></tr>
+        </table>
+      </div>
+
+      <div class="rightcol">
+        <div class="figarea">
+          <div class="stamp">
+            <div class="s1">BUILT IN PUBLIC</div>
+            <div class="s2">DAY 01</div>
+          </div>
+
+          <svg width="100%" height="100%" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <marker id="arr" markerWidth="9" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#22201b"/>
+              </marker>
+            </defs>
+
+            <!-- centerline (dash-dot drafting convention) -->
+            <line x1="120" y1="470" x2="700" y2="90" stroke="#8c887c" stroke-width="1"
+                  stroke-dasharray="18 6 3 6"/>
+
+            <!-- item 1: talker -->
+            <ellipse cx="215" cy="410" rx="105" ry="48" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="215" y="418" font-size="24" text-anchor="middle">/talker</text>
+
+            <!-- item 2: chatter -->
+            <rect x="330" y="245" width="160" height="56" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="410" y="281" font-size="22" text-anchor="middle">/chatter</text>
+
+            <!-- item 3: listener -->
+            <ellipse cx="600" cy="145" rx="112" ry="48" fill="#f5f2e8" stroke="#22201b" stroke-width="2"/>
+            <text x="600" y="153" font-size="24" text-anchor="middle">/listener</text>
+
+            <!-- flow arrows -->
+            <path d="M 290 372 C 315 350, 330 330, 355 303" fill="none" stroke="#22201b" stroke-width="2" marker-end="url(#arr)"/>
+            <path d="M 466 243 C 495 220, 515 205, 540 185" fill="none" stroke="#22201b" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="266" y="330" font-size="16" font-style="italic" transform="rotate(-38 286 335)">publishes</text>
+            <text x="463" y="200" font-size="16" font-style="italic" transform="rotate(-33 483 205)">subscribes</text>
+
+            <!-- leader lines with item bubbles -->
+            <line x1="150" y1="452" x2="92" y2="505" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="80" cy="516" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="80" y="522" font-size="17" text-anchor="middle">1</text>
+
+            <line x1="352" y1="247" x2="318" y2="207" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="307" cy="194" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="307" y="200" font-size="17" text-anchor="middle">2</text>
+
+            <line x1="672" y1="180" x2="722" y2="232" stroke="#22201b" stroke-width="1.25"/>
+            <circle cx="733" cy="243" r="16" fill="#f5f2e8" stroke="#22201b" stroke-width="1.5"/>
+            <text x="733" y="249" font-size="17" text-anchor="middle">3</text>
+
+            <!-- margin annotation -->
+            <text x="430" y="470" font-size="16" font-style="italic" fill="#55524a">note: neither node knows</text>
+            <text x="430" y="494" font-size="16" font-style="italic" fill="#55524a">the other exists. that is the point.</text>
+          </svg>
+        </div>
+        <div class="figlabel">Fig. 1. The conversation, as inspected live with rqt_graph.</div>
+
+        <table class="tblock">
+          <tr>
+            <td style="width:44%" rowspan="2">
+              <span class="lab">TITLE</span>
+              <span class="val">THE ROBOTICS STACK &amp;<br>A FIRST ROS 2 GRAPH</span>
+            </td>
+            <td style="width:19%"><span class="lab">DWG NO.</span><span class="val">RFS-001</span></td>
+            <td style="width:19%"><span class="lab">SHEET</span><span class="val">01 OF 45</span></td>
+            <td style="width:18%"><span class="lab">REV</span><span class="val">A</span></td>
+          </tr>
+          <tr>
+            <td><span class="lab">DATE</span><span class="val small">2026-07-17</span></td>
+            <td><span class="lab">SCALE</span><span class="val small">NTS</span></td>
+            <td><span class="lab">PHASE</span><span class="val small">A, FDNS.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lab">DRAWN BY</span><span class="val small">F. FONSECA, YALE '28</span></td>
+            <td colspan="3"><span class="lab">SOURCE</span><span class="val small">GITHUB.COM/FILIPPO-FONSECA/ROBOTICS-FROM-SCRATCH</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
