@@ -1,0 +1,9 @@
+# colcon build artifacts — machine-specific, regenerate with `colcon build`
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
