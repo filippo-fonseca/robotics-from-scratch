@@ -2,7 +2,7 @@
 
 **45 days. One notebook a day. From "robotics-adjacent" to proper roboticist, in public.**
 
-I'm Filippo, a MechE + EECS student at Yale ('28) and president of [Yale Undergraduate Robotics](https://yaleundergraduaterobotics.org). I have the pieces most people are missing (software, CAD, EE, controls classes), but I've never built the connective tissue of robotics as a discipline: the transform tree in my head, the sense→plan→act loop in my hands, the muscle memory of ROS 2. This repo is me fixing that, one day at a time, with every notebook, every bug, and every demo committed publicly.
+I'm Filippo, a MechE + EECS student at Yale ('28) and president of [Yale Undergraduate Robotics](https://yaleundergraduaterobotics.org). I've built robots before, but building fast and iterating lets you route around what you don't fully understand and still ship something that works. This repo is me going back and closing those gaps on purpose: the transform tree in my head, the sense→plan→act loop in my hands, the muscle memory of ROS 2, one day at a time, with every notebook, every bug, and every demo committed publicly.
 
 **Follow along:** I post daily-ish progress on [LinkedIn](https://www.linkedin.com/in/filippo-fonseca/). The full curriculum lives in [`robotics-45-day-plan.md`](robotics-45-day-plan.md).
 
